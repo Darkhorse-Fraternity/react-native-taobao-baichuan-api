@@ -8,9 +8,9 @@
 
 #import <MapKit/MapKit.h>
 #import <Foundation/Foundation.h>
-#import "RCTBridgeModule.h"
+#import <React/RCTBridgeModule.h>
 #import <AlibcTradeSDK/AlibcTradeSDK.h>
-#import "RCTUtils.h"
+#import <React/RCTUtils.h>
 
 
 @interface React_Native_Taobao_Baichuan_Api : NSObject <RCTBridgeModule>
