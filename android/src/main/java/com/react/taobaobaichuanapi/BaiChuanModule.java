@@ -51,7 +51,7 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
         //商品详情page
         AlibcBasePage detailPage = new AlibcDetailPage(itemId);
         //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
+        AlibcShowParams showParams = new AlibcShowParams(OpenType.Auto, false);
         Map<String, String> exParams = new HashMap<>();
         Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {
@@ -87,10 +87,10 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
          * @return 0标识跳转到手淘打开了, 1标识用h5打开,-1标识出错
          */
         //商品详情page
-        //Log.i("1111",url);
+        Log.i("1111",url);
         AlibcPage detailPage = new AlibcPage(url);
         //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
+        AlibcShowParams showParams = new AlibcShowParams(OpenType.Auto, false);
         Map<String, String> exParams = new HashMap<>();
         Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {
