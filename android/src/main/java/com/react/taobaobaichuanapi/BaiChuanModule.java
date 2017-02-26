@@ -122,7 +122,7 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
     public void findUser(final Promise promise) {
         try {
             LoginService service = (LoginService) MemberSDK.getService(LoginService.class);
-            service.auth(new LoginCallback() {
+            service.setLoginCallback(new LoginCallback() {
                 @Override
                 public void onSuccess(Session session) {
                     WritableMap map = Arguments.createMap();
