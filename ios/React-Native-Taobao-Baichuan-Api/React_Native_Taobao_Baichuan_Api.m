@@ -9,11 +9,26 @@
 #import "React_Native_Taobao_Baichuan_Api.h"
 #import <UIKit/UIWebView.h>
 #import "AppDelegate.h"
-
+#import <AlibabaAuthSDK/ALBBSDK.h>
 @implementation React_Native_Taobao_Baichuan_Api
 
 
 RCT_EXPORT_MODULE(React_Native_Taobao_Baichuan_Api);
+
+
+RCT_REMAP_METHOD(findUser,
+                 resolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
+{
+    
+    //  [[ALBBSDK sharedInstance]logout];
+    [[ALBBSDK sharedInstance]setLoginResultHandler:^(ALBBSession *session) {
+        
+        //    NSLog(@"openId%@",[session getUser].openId);
+        resolve(@{@"openId":[session getUser].openId});
+    }];
+}
+
 
 
 RCT_EXPORT_METHOD(jump:(NSString *)itemId)
@@ -63,7 +78,7 @@ RCT_EXPORT_METHOD(present:(NSString *)url)
                      page: page
                      showParams: showParam
                      taoKeParams: taoKeParams
-                     trackParam:nil
+                     trackParam:@{@"uid":@"13859102336"}
                      tradeProcessSuccessCallback:^(AlibcTradeResult * __nullable result) {
                          NSLog(@"%@", result);
                      }

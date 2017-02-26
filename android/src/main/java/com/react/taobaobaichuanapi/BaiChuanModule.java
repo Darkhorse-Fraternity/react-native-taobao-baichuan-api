@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+import com.ali.auth.third.core.MemberSDK;
+import com.ali.auth.third.core.callback.LoginCallback;
+import com.ali.auth.third.core.model.Session;
+import com.ali.auth.third.login.LoginService;
 import com.alibaba.baichuan.android.trade.AlibcTrade;
 import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
 import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
@@ -13,10 +17,13 @@ import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
 import com.alibaba.baichuan.android.trade.page.AlibcDetailPage;
 import com.alibaba.baichuan.android.trade.page.AlibcPage;
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.uimanager.IllegalViewOperationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +74,7 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
             @Override
             public void onFailure(int code, String msg) {
                 //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-                Log.i("百川"+code,msg);
+                Log.i("百川" + code, msg);
             }
         });
     }
@@ -87,7 +94,7 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
          * @return 0标识跳转到手淘打开了, 1标识用h5打开,-1标识出错
          */
         //商品详情page
-        Log.i("1111",url);
+        Log.i("1111", url);
         AlibcPage detailPage = new AlibcPage(url);
         //设置页面打开方式
         AlibcShowParams showParams = new AlibcShowParams(OpenType.Auto, false);
@@ -106,16 +113,40 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
             @Override
             public void onFailure(int code, String msg) {
                 //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-                Log.i("百川"+code,msg);
+                Log.i("百川" + code, msg);
             }
         });
     }
     
+    @ReactMethod
+    public void findUser(final Promise promise) {
+        try {
+            LoginService service = (LoginService) MemberSDK.getService(LoginService.class);
+            service.auth(new LoginCallback() {
+                @Override
+                public void onSuccess(Session session) {
+                    WritableMap map = Arguments.createMap();
+                    map.putString("openId", session.openId);
+                    promise.resolve(map);
+                }
+                @Override
+                public void onFailure(int code, String message) {
+                    promise.reject(code+"", message);
+                }
+            });
+            
+            
+        } catch (IllegalViewOperationException e) {
+            promise.reject("001", e.getMessage());
+        }
+    }
+    
     
     @Override
-    public void onActivityResult(Activity activity,final int requestCode, final int resultCode, final Intent intent) {
+    public void onActivityResult(Activity activity, final int requestCode, final int resultCode, final Intent intent) {
         
     }
+    
     @Override
     public void onNewIntent(final Intent intent) {
         
