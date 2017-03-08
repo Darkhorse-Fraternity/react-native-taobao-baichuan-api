@@ -8,7 +8,9 @@ import com.ali.auth.third.core.MemberSDK;
 import com.ali.auth.third.core.callback.LoginCallback;
 import com.ali.auth.third.core.model.Session;
 import com.ali.auth.third.login.LoginService;
+import com.ali.auth.third.login.callback.LogoutCallback;
 import com.alibaba.baichuan.android.trade.AlibcTrade;
+import com.alibaba.baichuan.android.trade.adapter.login.AlibcLogin;
 import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
 import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
 import com.alibaba.baichuan.android.trade.model.OpenType;
@@ -41,6 +43,28 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
     public String getName() {
         return "React_Native_Taobao_Baichuan_Api";
     }
+    
+    @ReactMethod
+    public void logout() {
+        try {
+            LoginService service = (LoginService) MemberSDK.getService(LoginService.class);
+            service.logout(new LogoutCallback() {
+                @Override
+                public void onSuccess() {
+                }
+                
+                @Override
+                public void onFailure(int code, String message) {
+                    //                    promise.reject(code+"", message);
+                }
+            });
+            
+            
+        } catch (IllegalViewOperationException e) {
+            //            promise.reject("001", e.getMessage());
+        }
+    }
+    
     
     @ReactMethod
     public void jump(String itemId) {
@@ -97,7 +121,7 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
         Log.i("1111", url);
         AlibcPage detailPage = new AlibcPage(url);
         //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Auto, false);
+        AlibcShowParams showParams = new AlibcShowParams(OpenType.H5, false);
         Map<String, String> exParams = new HashMap<>();
         Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {
@@ -134,6 +158,39 @@ public class BaiChuanModule extends ReactContextBaseJavaModule implements Activi
                     promise.reject(code+"", message);
                 }
             });
+            
+            
+        } catch (IllegalViewOperationException e) {
+            promise.reject("001", e.getMessage());
+        }
+    }
+    
+    
+    @ReactMethod
+    public void login(final Promise promise) {
+        try {
+            
+            if(!AlibcLogin.getInstance().isLogin()){
+                LoginService service = (LoginService) MemberSDK.getService(LoginService.class);
+                service.auth(new LoginCallback() {
+                    @Override
+                    public void onSuccess(Session session) {
+                        WritableMap map = Arguments.createMap();
+                        map.putString("openId", session.openId);
+                        promise.resolve(map);
+                    }
+                    @Override
+                    public void onFailure(int code, String message) {
+                        promise.reject(code+"", message);
+                    }
+                });
+            }else{
+                Session session = AlibcLogin.getInstance().getSession();
+                WritableMap map = Arguments.createMap();
+                map.putString("openId", session.openId);
+                promise.resolve(map);
+            }
+            
             
             
         } catch (IllegalViewOperationException e) {
